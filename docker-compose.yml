@@ -1,0 +1,7 @@
+services:
+  auth0:
+    container_name: jsonDiff
+    image: cosmtrek/air
+    working_dir: /app
+    volumes:
+      - .:/app
