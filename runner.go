@@ -14,12 +14,11 @@ type Runner struct {
 func (r Runner) Run(reader FileReader) (string, error) {
 	if len(r.Arguments) < 2 {
 		return "", errors.New("please provide two JSON files to compare")
-
 	}
 
-	args := r.Arguments[0:2]
+	fileArgs := r.Arguments[0:2]
 	var files []File
-	for _, arg := range args {
+	for _, arg := range fileArgs {
 		file := File{
 			Reader: reader,
 		}
@@ -33,6 +32,10 @@ func (r Runner) Run(reader FileReader) (string, error) {
 	comparator := JSONDiff{
 		File1: files[0],
 		File2: files[1],
+	}
+
+	if (len(r.Arguments) == 3) && (r.Arguments[2] == "--byteskip") {
+		comparator.ByteSkip = true
 	}
 
 	return comparator.FindDifferences(), nil

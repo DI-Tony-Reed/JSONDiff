@@ -66,3 +66,19 @@ func TestRunner_Run_InvalidFiles(t *testing.T) {
 		t.Errorf("Expected error, but got did not get one")
 	}
 }
+
+func TestRunner_Run_ByteSkip(t *testing.T) {
+	mockFileReader := MockFileReader{
+		Content: []byte(`{"key1": "value1"}`),
+		Err:     nil,
+	}
+
+	runner := Runner{
+		Arguments: []string{"file1.json", "file2.json", "--byteskip"},
+	}
+
+	_, err := runner.Run(mockFileReader)
+	if err != nil {
+		t.Fatalf("Expected no error, but got %v", err)
+	}
+}
