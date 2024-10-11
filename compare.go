@@ -2,8 +2,6 @@ package main
 
 import (
 	"bytes"
-	"fmt"
-	"github.com/go-test/deep"
 )
 
 type JSONDiff struct {
@@ -11,27 +9,23 @@ type JSONDiff struct {
 	File2 File
 }
 
-func (j JSONDiff) FindDifferences() string {
+func (j JSONDiff) FindDifferences() (string, error) {
 	if j.File1.Bytes == nil || j.File2.Bytes == nil {
-		return "No bytes defined for File1 and/or File2."
+		return "No bytes defined for File1 and/or File2.", nil
 	}
 
 	if j.File1.Map == nil || j.File2.Map == nil {
-		return "No map defined for File1 and/or File2."
+		return "No map defined for File1 and/or File2.", nil
 	}
 
 	if bytes.Equal(j.File1.Bytes, j.File2.Bytes) {
-		return "No differences found."
+		return "No differences found.", nil
 	}
 
-	if diff := deep.Equal(j.File1.Map, j.File2.Map); diff != nil {
-		differences := "Differences found:"
-		for _, d := range diff {
-			differences += fmt.Sprintf("\n%v", d)
-		}
-
-		return differences
+	output, err := check(j.File1.Map, j.File2.Map)
+	if err != nil {
+		return "", err
 	}
 
-	return "No differences found."
+	return output, nil
 }

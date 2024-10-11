@@ -34,5 +34,5 @@ func (r Runner) Run(reader FileReader) (string, error) {
 		File2: files[1],
 	}
 
-	return comparator.FindDifferences(), nil
+	return comparator.FindDifferences()
 }

@@ -54,7 +54,7 @@ func TestJSONDiff_FindDifferences(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.j.FindDifferences(); got != tt.want {
+			if got, _ := tt.j.FindDifferences(); got != tt.want {
 				t.Errorf("JSONDiff.FindDifferences() = %v, want %v", got, tt.want)
 			}
 		})
@@ -207,7 +207,7 @@ func TestJSONDiff_FindDifferencesWithSnykShape_Same(t *testing.T) {
 
 	for _, tt := range snykTests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.j.FindDifferences(); got != "No differences found." {
+			if got, _ := tt.j.FindDifferences(); got != "No differences found." {
 				t.Errorf("JSONDiff.FindDifferences() = %v)", got)
 			}
 		})
@@ -384,7 +384,7 @@ func TestJSONDiff_FindDifferencesWithSnykShape_Vulnerabilities(t *testing.T) {
 
 	for _, tt := range snykTests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.j.FindDifferences(); got == "No differences found." {
+			if got, _ := tt.j.FindDifferences(); got == "No differences found." {
 				t.Errorf("JSONDiff.FindDifferences() = %v)", got)
 			}
 		})
@@ -403,7 +403,7 @@ func TestJSONDiff_FindDifferences_NoBytes(t *testing.T) {
 		},
 	}
 
-	if got := j.FindDifferences(); got != "No bytes defined for File1 and/or File2." {
+	if got, _ := j.FindDifferences(); got != "No bytes defined for File1 and/or File2." {
 		t.Errorf("JSONDiff.FindDifferences() = %v, want %v", got, "No bytes defined for File1 and/or File2.")
 	}
 }
@@ -420,7 +420,7 @@ func TestJSONDiff_FindDifferences_NoMap(t *testing.T) {
 		},
 	}
 
-	if got := j.FindDifferences(); got != "No map defined for File1 and/or File2." {
+	if got, _ := j.FindDifferences(); got != "No map defined for File1 and/or File2." {
 		t.Errorf("JSONDiff.FindDifferences() = %v, want %v", got, "No map defined for File1 and/or File2.")
 	}
 }

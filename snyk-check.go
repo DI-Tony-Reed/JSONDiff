@@ -1,68 +1,27 @@
-package vendor
+package main
 
 import (
-	"encoding/json"
+	"errors"
 	"fmt"
-	"io/ioutil"
-	"log"
-	"os"
-	"path/filepath"
 	"strings"
 )
 
-// Original author:
-// https://github.com/hezro/snyk-code-pr-diff
-// Opted to pull in via vendor folder since no go.mod exists
-// in the original repo for retrieving with go get
-func check() {
-
-	// Check if there are at least two arguments
-	if len(os.Args) < 3 {
-		log.Fatal("Usage: go run main.go <baseline_file.json> <pr_file.json>")
-	}
-
-	// Read the baseline JSON file
-	baselineFile := filepath.Clean(os.Args[1])
-	baselineJSON, err := ioutil.ReadFile(baselineFile)
-	if err != nil {
-		log.Fatalf("Failed to read the baseline JSON file: %v", err)
-	}
-
-	// Read the PR JSON file
-	prFile := filepath.Clean(os.Args[2])
-	prJSON, err := ioutil.ReadFile(prFile)
-	if err != nil {
-		log.Fatalf("Failed to read the PR JSON file: %v", err)
-	}
-
-	// Parse the Baseline JSON scan
-	var baselineData map[string]interface{}
-	err = json.Unmarshal(baselineJSON, &baselineData)
-	if err != nil {
-		log.Fatalf("Failed to parse the Baseline JSON scan: %v", err)
-	}
-
-	// Parse the PR JSON scan
-	var prData map[string]interface{}
-	err = json.Unmarshal(prJSON, &prData)
-	if err != nil {
-		log.Fatalf("Failed to parse the PR JSON scan: %v", err)
-	}
-
-	fmt.Printf("\n")
-	fmt.Printf("Running Snyk Code PR Diff")
-	fmt.Printf("\n")
+// Original author: https://github.com/hezro/snyk-code-pr-diff/tree/main
+// Went this route as the original code does not have a go.mod and cannot be
+// pulled in with Go's package management
+func check(baseline map[string]interface{}, feature map[string]interface{}) (string, error) {
+	var results = strings.Builder{}
 
 	// Extract the "results" array from the Baseline scan
-	baselineResults, ok := extractResults(baselineData)
+	baselineResults, ok := extractResults(baseline)
 	if !ok {
-		log.Fatal("Failed to extract 'results' from the Baseline scan")
+		return "", errors.New("failed to extract 'results' from the Baseline scan")
 	}
 
 	// Extract the "results" array from the PR scan
-	prResults, ok := extractResults(prData)
+	prResults, ok := extractResults(feature)
 	if !ok {
-		log.Fatal("Failed to extract 'results' from PR scan")
+		return "", errors.New("failed to extract 'results' from the PR scan")
 	}
 
 	// Find the indices of new fingerprints from the PR results
@@ -72,7 +31,7 @@ func check() {
 	newIssues := extractNewIssues(prResults, newIndices)
 
 	// Count the number of new issues found from the PR results
-	issueCount := len(newIssues)
+	//issueCount := len(newIssues)
 
 	// Output the new issues from the PR results
 	for _, result := range newIssues {
@@ -80,39 +39,40 @@ func check() {
 		level = strings.Replace(level, "note", "Low", 1)
 		level = strings.Replace(level, "warning", "Medium", 1)
 		level = strings.Replace(level, "error", "High", 1)
-		fmt.Printf("✗ Severity: [%s]\n", level)
-		fmt.Printf("Path: %s\n", uri)
-		fmt.Printf("Start Line: %d\n", startLine)
-		fmt.Printf("Message: %s\n", message)
-		fmt.Printf("\n")
+		results.WriteString(fmt.Sprintf("✗ Severity: [%s]\n", level))
+		results.WriteString(fmt.Sprintf("Path: %s\n", uri))
+		results.WriteString(fmt.Sprintf("Start Line: %d\n", startLine))
+		results.WriteString(fmt.Sprintf("Message: %s\n", message))
+		results.WriteString("\n")
 	}
 
-	// Output the count new issues found from the PR results
-	if issueCount > 0 {
-		fmt.Printf("\n")
-		fmt.Printf("Total issues found: %d\n", issueCount)
+	//// Output the count new issues found from the PR results
+	//if issueCount > 0 {
+	//	results.WriteString("\n")
+	//	results.WriteString(fmt.Sprintf("Total issues found: %d\n", issueCount))
+	//
+	//	// Replace the "results" array in the PR scan with only the new issues found
+	//	feature["runs"].([]interface{})[0].(map[string]interface{})["results"] = newIssues
+	//
+	//	// Convert the new PR data to JSON
+	//	updatedPRScan, err := json.Marshal(feature)
+	//	if err != nil {
+	//		return "", errors.New("failed to convert updated data to JSON")
+	//	}
+	//
+	//	// Write the updated PR diff scan to a file
+	//	//err = ioutil.WriteFile("snyk_code_pr_diff_scan.json", updatedPRScan, 0644)
+	//	//if err != nil {
+	//	//	log.Fatalf("Failed to write updated data to file: %v", err)
+	//	//}
+	//	//fmt.Printf("\n")
+	//	//fmt.Println("Results saved in usnyk_code_pr_diff_scan.json")
+	//}
 
-		// Replace the "results" array in the PR scan with only the new issues found
-		prData["runs"].([]interface{})[0].(map[string]interface{})["results"] = newIssues
+	results.WriteString("\n")
+	results.WriteString("No issues found!")
 
-		// Convert the new PR data to JSON
-		updatedPRScan, err := json.Marshal(prData)
-		if err != nil {
-			log.Fatalf("Failed to convert updated data to JSON: %v", err)
-		}
-
-		// Write the updated PR diff scan to a file
-		err = ioutil.WriteFile("snyk_code_pr_diff_scan.json", updatedPRScan, 0644)
-		if err != nil {
-			log.Fatalf("Failed to write updated data to file: %v", err)
-		}
-		fmt.Printf("\n")
-		fmt.Println("Results saved in usnyk_code_pr_diff_scan.json")
-		os.Exit(1)
-	}
-
-	fmt.Printf("\n")
-	fmt.Println("No issues found!")
+	return results.String(), nil
 
 }
 
