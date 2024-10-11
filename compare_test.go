@@ -53,3 +53,33 @@ func TestJSONDiff_FindDifferences_NoMap(t *testing.T) {
 		t.Errorf("JSONDiff.FindDifferences() = %v, want %v", got, "No map defined for File1 and/or File2.")
 	}
 }
+
+func TestJSONDiff_FindDifferences(t *testing.T) {
+	j := JSONDiff{
+		File1: File{
+			Bytes: []byte(`{"runs": "value1"}`),
+			Map: map[string]interface{}{
+				"runs": []interface{}{
+					map[string]interface{}{
+						"results": []interface{}{},
+					},
+				},
+			},
+		},
+		File2: File{
+			Bytes: []byte(`{"runs": "value2"}`),
+			Map: map[string]interface{}{
+				"runs": []interface{}{
+					map[string]interface{}{
+						"results": []interface{}{},
+					},
+				},
+			},
+		},
+	}
+
+	_, err := j.FindDifferences()
+	if err != nil {
+		t.Errorf("JSONDiff.FindDifferences() error = %v", err)
+	}
+}
