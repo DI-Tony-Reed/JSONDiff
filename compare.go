@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"errors"
 )
 
 type JSONDiff struct {
@@ -27,5 +28,5 @@ func (j JSONDiff) FindDifferences() (string, error) {
 		return "", err
 	}
 
-	return output, nil
+	return output, errors.New("new vulnerability(s) found")
 }

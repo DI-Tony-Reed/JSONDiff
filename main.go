@@ -12,7 +12,7 @@ func main() {
 
 	output, err := runner.Run(OSFileReader{})
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(output, err)
 	}
 
 	log.Print(output)
