@@ -11,6 +11,7 @@ on:
 jobs:
 
   build:
+    name: Go tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
