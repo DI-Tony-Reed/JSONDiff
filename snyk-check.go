@@ -30,9 +30,6 @@ func check(baseline map[string]interface{}, feature map[string]interface{}) (str
 	// Extract the new issues objects from the PR results
 	newIssues := extractNewIssues(prResults, newIndices)
 
-	// Count the number of new issues found from the PR results
-	//issueCount := len(newIssues)
-
 	// Output the new issues from the PR results
 	for _, result := range newIssues {
 		level, message, uri, startLine := extractIssueData(result)
@@ -45,32 +42,6 @@ func check(baseline map[string]interface{}, feature map[string]interface{}) (str
 		results.WriteString(fmt.Sprintf("Message: %s\n", message))
 		results.WriteString("\n")
 	}
-
-	//// Output the count new issues found from the PR results
-	//if issueCount > 0 {
-	//	results.WriteString("\n")
-	//	results.WriteString(fmt.Sprintf("Total issues found: %d\n", issueCount))
-	//
-	//	// Replace the "results" array in the PR scan with only the new issues found
-	//	feature["runs"].([]interface{})[0].(map[string]interface{})["results"] = newIssues
-	//
-	//	// Convert the new PR data to JSON
-	//	updatedPRScan, err := json.Marshal(feature)
-	//	if err != nil {
-	//		return "", errors.New("failed to convert updated data to JSON")
-	//	}
-	//
-	//	// Write the updated PR diff scan to a file
-	//	//err = ioutil.WriteFile("snyk_code_pr_diff_scan.json", updatedPRScan, 0644)
-	//	//if err != nil {
-	//	//	log.Fatalf("Failed to write updated data to file: %v", err)
-	//	//}
-	//	//fmt.Printf("\n")
-	//	//fmt.Println("Results saved in usnyk_code_pr_diff_scan.json")
-	//}
-
-	results.WriteString("\n")
-	results.WriteString("No issues found!")
 
 	return results.String(), nil
 

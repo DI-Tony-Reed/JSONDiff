@@ -8,9 +8,6 @@ type Runner struct {
 	Arguments []string
 }
 
-// Run Simple proof of concept displaying output of difference of JSON files using existing package from go-test.
-// https://github.com/go-test/deep
-// https://pkg.go.dev/github.com/go-test/deep
 func (r Runner) Run(reader FileReader) (string, error) {
 	if len(r.Arguments) < 2 {
 		return "", errors.New("please provide two JSON files to compare")
