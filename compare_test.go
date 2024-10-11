@@ -79,7 +79,59 @@ func TestJSONDiff_FindDifferences(t *testing.T) {
 	}
 
 	output, err := j.FindDifferences()
-	if err == nil || output != "" {
+	if err != nil || output != "No differences found." {
 		t.Errorf("JSONDiff.FindDifferences() error = %v", err)
+	}
+}
+
+func TestJSONDiff_FindDifferences_Error(t *testing.T) {
+	j := JSONDiff{
+		File1: File{
+			Bytes: []byte(`{"runs": "value1"}`),
+			Map: map[string]interface{}{
+				"runs": []interface{}{
+					map[string]interface{}{
+						"results": []interface{}{},
+					},
+				},
+			},
+		},
+		File2: File{
+			Bytes: []byte(`{"runs": "value2"}`),
+			Map: map[string]interface{}{
+				"runs": []interface{}{
+					map[string]interface{}{
+						"results": []interface{}{
+							map[string]interface{}{
+								"fingerprints": map[string]interface{}{
+									"identity": "67890",
+								},
+								"level": "error",
+								"message": map[string]interface{}{
+									"text": "New Issue",
+								},
+								"locations": []interface{}{
+									map[string]interface{}{
+										"physicalLocation": map[string]interface{}{
+											"artifactLocation": map[string]interface{}{
+												"uri": "file2.go",
+											},
+											"region": map[string]interface{}{
+												"startLine": 20.0,
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	output, err := j.FindDifferences()
+	if err == nil || len(output) == 0 {
+		t.Errorf("JSONDiff.FindDifferences() wanted error, got = %v and output %v", err, output)
 	}
 }

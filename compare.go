@@ -28,5 +28,9 @@ func (j JSONDiff) FindDifferences() (string, error) {
 		return "", err
 	}
 
+	if len(output) == 0 {
+		return "No differences found.", nil
+	}
+
 	return output, errors.New("new vulnerability(s) found")
 }
