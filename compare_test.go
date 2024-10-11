@@ -424,22 +424,3 @@ func TestJSONDiff_FindDifferences_NoMap(t *testing.T) {
 		t.Errorf("JSONDiff.FindDifferences() = %v, want %v", got, "No map defined for File1 and/or File2.")
 	}
 }
-
-func TestJSONDiff_FindDIfferences_ByteSkip(t *testing.T) {
-	j := JSONDiff{
-		File1: File{
-			Bytes: []byte(`{"key1": "value1"}, {"key2": "value2"}`),
-			Map:   map[string]interface{}{"key1": "value1", "key2": "value2"},
-		},
-		File2: File{
-			Bytes: []byte(`{"key1": "value1"}`),
-			Map:   map[string]interface{}{"key1": "value1"},
-		},
-		ByteSkip: true,
-	}
-
-	expected := "Second file smaller than first and byteskip enabled"
-	if got := j.FindDifferences(); got != expected {
-		t.Errorf("JSONDiff.FindDifferences() = %v, want %v", got, expected)
-	}
-}

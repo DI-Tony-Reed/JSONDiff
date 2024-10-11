@@ -7,9 +7,8 @@ import (
 )
 
 type JSONDiff struct {
-	File1    File
-	File2    File
-	ByteSkip bool
+	File1 File
+	File2 File
 }
 
 func (j JSONDiff) FindDifferences() string {
@@ -23,10 +22,6 @@ func (j JSONDiff) FindDifferences() string {
 
 	if bytes.Equal(j.File1.Bytes, j.File2.Bytes) {
 		return "No differences found."
-	}
-
-	if j.ByteSkip && len(j.File2.Bytes) < len(j.File1.Bytes) {
-		return "Second file smaller than first and byteskip enabled"
 	}
 
 	if diff := deep.Equal(j.File1.Map, j.File2.Map); diff != nil {

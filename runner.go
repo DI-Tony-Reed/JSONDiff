@@ -34,9 +34,5 @@ func (r Runner) Run(reader FileReader) (string, error) {
 		File2: files[1],
 	}
 
-	if (len(r.Arguments) == 3) && (r.Arguments[2] == "--byteskip") {
-		comparator.ByteSkip = true
-	}
-
 	return comparator.FindDifferences(), nil
 }
