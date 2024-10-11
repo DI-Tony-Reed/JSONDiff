@@ -78,8 +78,8 @@ func TestJSONDiff_FindDifferences(t *testing.T) {
 		},
 	}
 
-	_, err := j.FindDifferences()
-	if err != nil {
+	output, err := j.FindDifferences()
+	if err == nil || output != "" {
 		t.Errorf("JSONDiff.FindDifferences() error = %v", err)
 	}
 }

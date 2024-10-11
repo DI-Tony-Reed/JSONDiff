@@ -44,7 +44,6 @@ func check(baseline map[string]interface{}, feature map[string]interface{}) (str
 	}
 
 	return results.String(), nil
-
 }
 
 // Extract the "results" array from the JSON data
