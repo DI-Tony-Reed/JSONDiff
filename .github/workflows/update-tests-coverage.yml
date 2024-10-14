@@ -44,18 +44,31 @@ jobs:
             COLOR="green"
           elif (( $(echo "$COVERAGE >= 90" | bc -l) )); then
             COLOR="brightgreen"
-          else
-            COLOR="gray"
           fi
           
-          BADGE_MARKDOWN="![Coverage Badge](https://img.shields.io/badge/Coverage-${COVERAGE}%25-${COLOR}).svg)"
-          sed -i "s|![Coverage](.*)|$BADGE_MARKDOWN|g" README.md || echo "$BADGE_MARKDOWN" >> README.md
+          BADGE_MARKDOWN="![Coverage Badge](https://img.shields.io/badge/Coverage-${COVERAGE}%25-${COLOR}.svg)"
+          echo "Current README.md content:"
+          cat README.md # Debug output
+          
+          # Use sed to update the badge or append it if not found
+          if grep -q "Coverage Badge" README.md; then
+            sed -i "s|![Coverage Badge](.*)|$BADGE_MARKDOWN|g" README.md
+          else
+            echo "$BADGE_MARKDOWN" >> README.md
+          fi
+          
+          echo "New README.md content:"
+          cat README.md # Debug output
 
       - name: Commit coverage badge
         continue-on-error: true
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          
+          # Check the status to understand what files are tracked
+          git status
+          
           git add README.md
           git commit -m "Update coverage badge to $COVERAGE%"
           git push
