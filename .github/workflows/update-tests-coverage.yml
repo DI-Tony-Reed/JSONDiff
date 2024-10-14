@@ -4,10 +4,7 @@ name: Update Tests Coverage
 
 on:
   push:
-#  push:
-#    branches: [ "main" ]
-#  pull_request:
-#    branches: [ "main" ]
+    branches: [ "main" ]
 
 jobs:
 
@@ -47,24 +44,14 @@ jobs:
           fi
           
           BADGE_MARKDOWN="![Coverage Badge](https://img.shields.io/badge/Coverage-${COVERAGE}%25-${COLOR}.svg)"
-          echo "Current README.md content:"
-          cat README.md # Debug output
-          
           sed -i "s|!\[Coverage Badge\](.*)|$BADGE_MARKDOWN|g" README.md
 
-          echo "Updated README.md content:"
-          cat README.md # Debug output
-          
       - name: Commit coverage badge
         continue-on-error: true
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          
-          # Add the README.md if changes exist
           git add README.md
-          
-          # Only commit if there are changes
           if ! git diff-index --quiet HEAD --; then
             git commit -m "Update coverage badge to $COVERAGE%"
             git push
