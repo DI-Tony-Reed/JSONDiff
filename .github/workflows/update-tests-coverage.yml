@@ -1,6 +1,6 @@
 # https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
 
-name: Tests
+name: Update Tests Coverage
 
 on:
   push:
@@ -12,7 +12,7 @@ on:
 jobs:
 
   build:
-    name: Go tests
+    name: Go test coverage
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -42,6 +42,7 @@ jobs:
         id: badge
         run: |
           COVERAGE=$(echo ${{ env.coverage }})
+          echo $COVERAGE
           COLOR="red"
           if [ $(echo "$COVERAGE > 80" | bc) -eq 1 ]; then COLOR="green"; fi
           if [ $(echo "$COVERAGE > 50" | bc) -eq 1 ]; then COLOR="yellow"; fi
