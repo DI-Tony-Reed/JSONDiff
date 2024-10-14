@@ -48,8 +48,10 @@ jobs:
             COLOR="red"
           elif (( $(echo "$COVERAGE >= 50 && $COVERAGE < 80" | bc -l) )); then
             COLOR="yellow"
-          elif (( $(echo "$COVERAGE >= 80" | bc -l) )); then
+          elif (( $(echo "$COVERAGE >= 80 && $COVERAGE < 90" | bc -l) )); then
             COLOR="green"
+          elif (( $(echo "$COVERAGE >= 90" | bc -l) )); then
+            COLOR="brightgreen"
           else
             COLOR="gray"
           fi
