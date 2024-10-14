@@ -28,21 +28,14 @@ jobs:
       - name: Build
         run: go build -v ./...
 
-      - name: Test with coverage
-        run: go test -coverprofile=coverage.out -v ./...
-
-      - name: Generate coverage percentage
-        id: coverage
-        run: |
-          go tool cover -func=coverage.out | grep total | awk '{print $3}' > coverage.txt
-          COVERAGE=$(cat coverage.txt | sed 's/%//')
-          echo "coverage=$COVERAGE" >> $GITHUB_ENV
-
-      - name: Generate Coverage Badge
+      - name: Run tests and generate coverage badge
         id: badge
         run: |
-          COVERAGE=$(echo ${{ env.coverage }})
+          go test -coverprofile=coverage.out ./...
+          COVERAGE=$(go tool cover -func=coverage.out | grep total | awk '{print $3}' | sed 's/%//')
+          echo "Coverage: $COVERAGE"
           
+        
           COLOR="red"
           if (( $(echo "$COVERAGE < 50" | bc -l) )); then
             COLOR="red"
@@ -57,7 +50,9 @@ jobs:
           fi
           
           BADGE_MARKDOWN="![Coverage](https://img.shields.io/badge/coverage-${COVERAGE}%25-${BADGE_COLOR})"
-          sed -i "s|^\\[!\\[Coverage\\](.*\\)|$BADGE_MARKDOWN|g" README.md
+          echo "Updating README.md with the new badge..."
+          
+          sed -i "s|\\[!\\[Coverage\\](.*\\)|$BADGE_MARKDOWN|g" README.md
 
       - name: Commit coverage badge
         continue-on-error: true
