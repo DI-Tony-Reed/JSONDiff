@@ -50,8 +50,6 @@ jobs:
           fi
           
           BADGE_MARKDOWN="![Coverage](https://img.shields.io/badge/coverage-${COVERAGE}%25-${COLOR})"
-          echo "Updating README.md with the new badge..."
-          
           sed -i "s|![Coverage](.*)|$BADGE_MARKDOWN|g" README.md
 
       - name: Commit coverage badge

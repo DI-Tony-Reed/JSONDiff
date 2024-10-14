@@ -1,5 +1,5 @@
 [![Tests](https://github.com/DI-Tony-Reed/JSONDiff/actions/workflows/tests.yaml/badge.svg)](https://github.com/DI-Tony-Reed/JSONDiff/actions/workflows/tests.yaml)
-![Coverage Badge](https://img.shields.io/badge/Coverage-93.8%25-brightgreen.svg)
+![Coverage Badge](https://img.shields.io/badge/Coverage-23.8%25-red.svg)
 
 # What is this
 This tool accepts two JSON Snyk scans and returns the difference between them. It utilizes a slightly modified version of https://github.com/hezro/snyk-code-pr-diff for the comparison. 
