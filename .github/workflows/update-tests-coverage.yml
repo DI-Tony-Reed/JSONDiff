@@ -50,7 +50,7 @@ jobs:
           echo "Current README.md content:"
           cat README.md # Debug output
           
-          sed -i "s/![Coverage Badge](.*)/$BADGE_MARKDOWN/g" README.md
+          sed -i "s|!\[Coverage Badge\](.*)|$BADGE_MARKDOWN|g" README.md
 
           echo "Updated README.md content:"
           cat README.md # Debug output
