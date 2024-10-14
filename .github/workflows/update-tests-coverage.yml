@@ -35,7 +35,6 @@ jobs:
           COVERAGE=$(go tool cover -func=coverage.out | grep total | awk '{print $3}' | sed 's/%//')
           echo "Coverage: $COVERAGE"
           
-        
           COLOR="gray"
           if (( $(echo "$COVERAGE < 50" | bc -l) )); then
             COLOR="red"
@@ -50,13 +49,19 @@ jobs:
           fi
           
           BADGE_MARKDOWN="![Coverage](https://img.shields.io/badge/coverage-${COVERAGE}%25-${COLOR})"
-          sed -i "s|![Coverage](.*)|$BADGE_MARKDOWN|g" README.md
+          sed -i "s|![Coverage](.*)|$BADGE_MARKDOWN|g" README.md || echo "$BADGE_MARKDOWN" >> README.md
+
+      - name: List files
+        run: ls -la
 
       - name: Commit coverage badge
         continue-on-error: true
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          
+          git status
+          
           git add README.md
           git commit -m "Update coverage badge to $COVERAGE%"
           git push
