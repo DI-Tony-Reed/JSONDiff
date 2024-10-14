@@ -50,27 +50,32 @@ jobs:
           echo "Current README.md content:"
           cat README.md # Debug output
           
-          # Use sed to update the badge or append it if not found
+          # Update the badge or append if not found
           if grep -q "Coverage Badge" README.md; then
             sed -i "s|![Coverage Badge](.*)|$BADGE_MARKDOWN|g" README.md
           else
             echo "$BADGE_MARKDOWN" >> README.md
           fi
-          
-          echo "New README.md content:"
-          cat README.md # Debug output
 
+          echo "Updated README.md content:"
+          cat README.md # Debug output
+          
       - name: Commit coverage badge
         continue-on-error: true
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           
-          # Check the status to understand what files are tracked
-          git status
-          
+          # Add the README.md if changes exist
           git add README.md
-          git commit -m "Update coverage badge to $COVERAGE%"
-          git push
+          
+          # Only commit if there are changes
+          if ! git diff-index --quiet HEAD --; then
+            git commit -m "Update coverage badge to $COVERAGE%"
+            git push
+          else
+            echo "No changes to commit."
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
