@@ -48,20 +48,14 @@ jobs:
             COLOR="gray"
           fi
           
-          BADGE_MARKDOWN="![Coverage](https://img.shields.io/badge/coverage-${COVERAGE}%25-${COLOR})"
+          BADGE_MARKDOWN="![Coverage Badge](https://img.shields.io/badge/Coverage-${COVERAGE}%25-${COLOR}).svg)"
           sed -i "s|![Coverage](.*)|$BADGE_MARKDOWN|g" README.md || echo "$BADGE_MARKDOWN" >> README.md
-
-      - name: List files
-        run: ls -la
 
       - name: Commit coverage badge
         continue-on-error: true
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          
-          git status
-          
           git add README.md
           git commit -m "Update coverage badge to $COVERAGE%"
           git push
